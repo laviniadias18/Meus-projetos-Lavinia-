@@ -1,0 +1,1 @@
+O código tenta ler valores para duas variáveis a e b, realizar diferentes operações matemáticas com esses valores (soma, subtração, multiplicação, divisão) e exibir os resultados. Ele também inclui condicionais se(a == b) em vários momentos, mas não muda o comportamento dependendo do resultado (ou seja, o que acontece se for verdadeiro ou falso é sempre igual).
