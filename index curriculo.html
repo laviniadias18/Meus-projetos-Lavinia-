@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currículo</title>
+    <style>
+        /* CSS Integrado */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        label {
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        textarea {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        input[type="file"] {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        button {
+            background-color: #0c3158;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            align-self: flex-start;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #0e335a;
+        }
+
+        #downloadPdf {
+            background-color: #28a745;
+            margin-left: 10px;
+        }
+
+        #downloadPdf:hover {
+            background-color: #218838;
+        }
+
+        .curriculum-output {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            border: 1px solid #eee;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .curriculum-output h2 {
+            color: #09294b;
+            border-bottom: 2px solid #072749;
+            padding-bottom: 5px;
+            margin-top: 20px;
+        }
+
+        .curriculum-output h2:first-of-type {
+            margin-top: 0;
+        }
+
+        .curriculum-output p {
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .curriculum-output strong {
+            color: #333;
+        }
+
+        .profile-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 3px solid #06284d;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+</style>
+</head>
+<body>
+        <div class="container">
+        <h1>Currículo</h1>
+
+        <form id="curriculumForm">
+            <label for="profilePhoto">Foto de Perfil:</label>
+            <input type="file" id="profilePhoto" accept="image/*">
+
+            <label for="fullName">Nome Completo:</label>
+            <input type="text" id="fullName" required>
+
+            <label for="email">E-mail:</label>
+            <input type="email" id="email" required>
+
+            <label for="phone">Telefone:</label>
+            <input type="tel" id="phone">
+
+            <label for="cityState">Cidade/Estado:</label>
+            <input type="text" id="cityState">
+
+            <label for="objective">Objetivo Profissional:</label>
+            <textarea id="objective" rows="4"></textarea>
+
+            <label for="education">Formação Acadêmica:</label>
+            <textarea id="education" rows="4"></textarea>
+
+            <label for="experience">Experiência Profissional:</label>
+            <textarea id="experience" rows="4"></textarea>
+
+            <label for="courses">Cursos Complementares:</label>
+            <textarea id="courses" rows="4"></textarea>
+
+            <label for="languages">Idiomas:</label>
+            <textarea id="languages" rows="4"></textarea>
+
+            <button type="button" id="generateCurriculum">Gerar Currículo</button>
+            <button type="button" id="downloadPdf" style="display: none;">Baixar em PDF</button>
+            </form>
+
+            <div id="curriculumOutput" class="curriculum-output">
+            </div>
+            </div>
+
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+            <script>
+        /* JavaScript Integrado */
+        document.addEventListener('DOMContentLoaded', () => {
+            const curriculumForm = document.getElementById('curriculumForm');
+            const generateCurriculumBtn = document.getElementById('generateCurriculum');
+            const downloadPdfBtn = document.getElementById('downloadPdf');
+            const curriculumOutput = document.getElementById('curriculumOutput');
+            const profilePhotoInput = document.getElementById('profilePhoto');
+
+            let profilePhotoBase64 = '';
+
+            profilePhotoInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        profilePhotoBase64 = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    profilePhotoBase64 = '';
+                }
+            });
+                generateCurriculumBtn.addEventListener('click', () => {
+                const fullName = document.getElementById('fullName').value;
+                const email = document.getElementById('email').value;
+                const phone = document.getElementById('phone').value;
+                const cityState = document.getElementById('cityState').value;
+                const objective = document.getElementById('objective').value;
+                const education = document.getElementById('education').value;
+                const experience = document.getElementById('experience').value;
+                const courses = document.getElementById('courses').value;
+                const languages = document.getElementById('languages').value;
+
+                let curriculumHtml = '';
+
+                if (profilePhotoBase64) {
+                    curriculumHtml += `<img src="${profilePhotoBase64}" alt="Foto de Perfil" class="profile-photo">`;
+                }
+
+                curriculumHtml += `<h2>${fullName}</h2>`;
+                curriculumHtml += `<p><strong>E-mail:</strong> ${email}</p>`;
+                if (phone) curriculumHtml += `<p><strong>Telefone:</strong> ${phone}</p>`;
+                if (cityState) curriculumHtml += `<p><strong>Cidade/Estado:</strong> ${cityState}</p>`;
+
+                if (objective) {
+                    curriculumHtml += `<h2>Objetivo Profissional</h2>`;
+                    curriculumHtml += `<p>${objective.replace(/\n/g, '<br>')}</p>`;
+                }
+
+                if (education) {
+                    curriculumHtml += `<h2>Formação Acadêmica</h2>`;
+                    curriculumHtml += `<p>${education.replace(/\n/g, '<br>')}</p>`;
+                }
+
+                if (experience) {
+                    curriculumHtml += `<h2>Experiência Profissional</h2>`;
+                    curriculumHtml += `<p>${experience.replace(/\n/g, '<br>')}</p>`;
+                }
+
+                if (courses) {
+                    curriculumHtml += `<h2>Cursos Complementares</h2>`;
+                    curriculumHtml += `<p>${courses.replace(/\n/g, '<br>')}</p>`;
+                }
+
+                if (languages) {
+                    curriculumHtml += `<h2>Idiomas</h2>`;
+                    curriculumHtml += `<p>${languages.replace(/\n/g, '<br>')}</p>`;
+                }
+
+                curriculumOutput.innerHTML = curriculumHtml;
+                downloadPdfBtn.style.display = 'inline-block';
+            });
+                downloadPdfBtn.addEventListener('click', () => {
+                const element = curriculumOutput;
+                const opt = {
+                    margin:       1,
+                    filename:     'curriculo.pdf',
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { scale: 2, useCORS: true },
+                    jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+                };
+                html2pdf().from(element).set(opt).save();
+            });
+        });
+    </script>
+</body>
+</html>
